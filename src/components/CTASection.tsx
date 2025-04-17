@@ -26,7 +26,7 @@ const CTASection: React.FC = () => {
       await addEnquiry(form);
       setSubmitted(true);
       setForm({ name: "", email: "", message: "" });
-    } catch (err) {
+    } catch {
       setError("Could not send enquiry. Please try again later.");
     } finally {
       setLoading(false);
