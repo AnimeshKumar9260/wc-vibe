@@ -5,6 +5,11 @@ import React, { useState } from "react";
 const CTASection: React.FC = () => {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Import Firestore utility
+  // (import at top): import { addEnquiry } from "../lib/firestore";
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -12,10 +17,20 @@ const CTASection: React.FC = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
-    // Here you would typically handle form submission (API call, etc.)
+    setError(null);
+    setLoading(true);
+    try {
+      const { addEnquiry } = await import("../lib/firestore");
+      await addEnquiry(form);
+      setSubmitted(true);
+      setForm({ name: "", email: "", message: "" });
+    } catch (err) {
+      setError("Could not send enquiry. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -62,6 +77,7 @@ const CTASection: React.FC = () => {
                   onChange={handleChange}
                   required
                   className="px-5 py-3 rounded-lg border border-sky-200 focus:border-sky-400 focus:ring-2 focus:ring-sky-100 outline-none text-sky-900 bg-sky-50 placeholder-sky-400 transition"
+                  disabled={loading}
                 />
                 <input
                   type="email"
@@ -71,6 +87,7 @@ const CTASection: React.FC = () => {
                   onChange={handleChange}
                   required
                   className="px-5 py-3 rounded-lg border border-sky-200 focus:border-sky-400 focus:ring-2 focus:ring-sky-100 outline-none text-sky-900 bg-sky-50 placeholder-sky-400 transition"
+                  disabled={loading}
                 />
                 <textarea
                   name="message"
@@ -80,12 +97,15 @@ const CTASection: React.FC = () => {
                   required
                   rows={4}
                   className="px-5 py-3 rounded-lg border border-sky-200 focus:border-sky-400 focus:ring-2 focus:ring-sky-100 outline-none text-sky-900 bg-sky-50 placeholder-sky-400 transition"
+                  disabled={loading}
                 />
+                {error && <div className="text-red-600 text-sm mb-2">{error}</div>}
                 <button
                   type="submit"
-                  className="mt-2 w-full bg-sky-600 hover:bg-sky-700 text-white font-semibold px-8 py-3 rounded-lg shadow-lg transition focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-2"
+                  className="mt-2 w-full bg-sky-600 hover:bg-sky-700 text-white font-semibold px-8 py-3 rounded-lg shadow-lg transition focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-2 disabled:opacity-60"
+                  disabled={loading}
                 >
-                  Send Enquiry
+                  {loading ? "Sending..." : "Send Enquiry"}
                 </button>
               </form>
             )}
