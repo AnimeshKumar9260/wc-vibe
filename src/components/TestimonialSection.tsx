@@ -24,6 +24,8 @@ const testimonials = [
   },
 ];
 
+import Image from 'next/image';
+
 const TestimonialSection: React.FC = () => (
   <section className="py-16 px-4 bg-sky-50">
     <div className="max-w-4xl mx-auto text-center mb-12">
@@ -33,9 +35,11 @@ const TestimonialSection: React.FC = () => (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
       {testimonials.map((t) => (
         <div key={t.name} className="bg-white rounded-xl shadow-md p-8 flex flex-col items-center hover:shadow-lg transition">
-          <img
+          <Image
             src={t.image}
             alt={t.name}
+            width={80}
+            height={80}
             className="w-20 h-20 rounded-full mb-4 object-cover border-4 border-sky-200"
             loading="lazy"
           />

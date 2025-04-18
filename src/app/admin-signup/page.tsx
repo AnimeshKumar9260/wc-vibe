@@ -28,8 +28,12 @@ export default function AdminSignup() {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
       setSuccess(true);
-    } catch (err: any) {
-      setError(err.message || "Signup failed");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message || "Signup failed");
+      } else {
+        setError("Signup failed");
+      }
     } finally {
       setLoading(false);
     }

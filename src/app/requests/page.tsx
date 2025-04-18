@@ -22,10 +22,11 @@ export default function Requests() {
   useEffect(() => {
     getEnquiries()
       .then((data) => {
+        const enquiriesData = data as Enquiry[];
         setEnquiries(
-          data
-            .filter((item: any) => item.name && item.email && item.message)
-            .map((item: any) => ({
+          enquiriesData
+            .filter((item) => item.name && item.email && item.message)
+            .map((item) => ({
               id: item.id,
               name: item.name || "(No Name)",
               email: item.email || "(No Email)",
@@ -35,7 +36,7 @@ export default function Requests() {
             }))
         );
       })
-      .catch((err) => setError("Failed to fetch enquiries"))
+      .catch(() => setError("Failed to fetch enquiries"))
       .finally(() => setLoading(false));
   }, []);
 
