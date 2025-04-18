@@ -1,9 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
+import { useAuth } from "./AuthContext";
+import { signOut } from "firebase/auth";
+import auth from "../lib/auth";
+import { useRouter } from "next/navigation";
 
 const navLinks = [
-  { name: "Home", href: "#home" },
+  { name: "Home", href: "/" },
   { name: "About", href: "#about" },
   { name: "Services", href: "#services" },
   { name: "Contact", href: "#contact" },
@@ -18,9 +23,11 @@ const Navbar = () => {
         className="container mx-auto flex items-center justify-between px-4 py-4"
         aria-label="Main navigation"
       >
-        <div className="text-2xl font-bold text-blue-600">WC</div>
+        <Link href="/" className="text-2xl font-bold text-blue-600">
+          WC
+        </Link>
         {/* Desktop Nav */}
-        <div className="hidden md:flex space-x-8">
+        <div className="hidden md:flex space-x-8 items-center">
           {navLinks.map((link) => (
             <a
               key={link.name}
@@ -30,6 +37,43 @@ const Navbar = () => {
               {link.name}
             </a>
           ))}
+          {/* Auth Buttons */}
+          {(() => {
+            const { user, loading } = useAuth();
+            const router = useRouter();
+            const handleLogout = async () => {
+              await signOut(auth);
+              router.push("/");
+            };
+            if (loading) return null;
+            if (user) {
+              return (
+                <>
+                  <a
+                    href="/requests"
+                    className="ml-4 px-4 py-2 bg-green-600 text-white font-semibold rounded hover:bg-green-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
+                  >
+                    Requests
+                  </a>
+                  <button
+                    onClick={handleLogout}
+                    className="ml-2 px-4 py-2 bg-gray-200 text-gray-800 font-semibold rounded hover:bg-gray-300 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-400"
+                  >
+                    Logout
+                  </button>
+                </>
+              );
+            } else {
+              return (
+                <a
+                  href="/admin-login"
+                  className="ml-4 px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                >
+                  Login
+                </a>
+              );
+            }
+          })()}
         </div>
         {/* Mobile Hamburger */}
         <button
@@ -67,6 +111,46 @@ const Navbar = () => {
                 {link.name}
               </a>
             ))}
+            {/* Auth Buttons */}
+            {(() => {
+              const { user, loading } = useAuth();
+              const router = useRouter();
+              const handleLogout = async () => {
+                await signOut(auth);
+                setMenuOpen(false);
+                router.push("/");
+              };
+              if (loading) return null;
+              if (user) {
+                return (
+                  <>
+                    <a
+                      href="/admin-requests"
+                      className="mt-2 px-4 py-2 bg-green-600 text-white font-semibold rounded hover:bg-green-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 text-center"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      Requests
+                    </a>
+                    <button
+                      onClick={handleLogout}
+                      className="mt-2 px-4 py-2 bg-gray-200 text-gray-800 font-semibold rounded hover:bg-gray-300 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 text-center"
+                    >
+                      Logout
+                    </button>
+                  </>
+                );
+              } else {
+                return (
+                  <a
+                    href="/admin-login"
+                    className="mt-2 px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 text-center"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Login
+                  </a>
+                );
+              }
+            })()}
           </div>
         </div>
       )}
