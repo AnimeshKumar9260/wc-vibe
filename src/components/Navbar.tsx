@@ -84,7 +84,7 @@ const Navbar = () => {
             {loading ? null : user ? (
               <>
                 <Link
-                  href="/admin-requests"
+                  href="/requests"
                   className="mt-2 px-4 py-2 bg-green-600 text-white font-semibold rounded hover:bg-green-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 text-center"
                   onClick={() => setMenuOpen(false)}
                 >
